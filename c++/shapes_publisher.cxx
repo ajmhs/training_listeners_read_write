@@ -31,6 +31,8 @@
 using std::cout;
 using std::endl;
 
+
+// CAUTION: Listeners are invoked by internal threads... 
 class DWListener : public dds::pub::NoOpDataWriterListener<ShapeTypeExtended> {
 
     virtual void on_publication_matched(

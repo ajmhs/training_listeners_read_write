@@ -41,6 +41,8 @@ static unsigned int samples_read = 0;
 
 class DRListener : public dds::sub::NoOpDataReaderListener<ShapeTypeExtended> {
 
+    // This is the NoOp - where anything not overridden does nothing as a convenience (cleaner code)
+
     // There are other overrides available, but I don't need to use them here.
     // I could use them for logging events if I needed to know
 
@@ -64,8 +66,8 @@ class DRListener : public dds::sub::NoOpDataReaderListener<ShapeTypeExtended> {
 
         // -1 for a subscription lost, else gained one
         cout << "Inside on_subscription_matched: " << 
-            (subscription_state.current_count_change() < 0 ? "lost" : "gained") <<
-            " a subscription" << endl; 
+            (subscription_state.current_count_change() < 0 ? "lost" : "found") <<
+            " a publisher" << endl; 
     }
 };
 
