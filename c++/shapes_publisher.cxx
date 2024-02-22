@@ -28,6 +28,22 @@
 #include "application.hpp"  // for command line parsing and ctrl-c
 #include "shapes.hpp"
 
+using std::cout;
+using std::endl;
+
+class DWListener : public dds::pub::NoOpDataWriterListener<ShapeTypeExtended> {
+
+    virtual void on_publication_matched(
+        dds::pub::DataWriter<ShapeTypeExtended> &writer,
+        const dds::core::status::PublicationMatchedStatus &publication_state) {
+
+        // -1 for a subscription lost, else gained one
+        cout << "Inside on_publication_matched: " << 
+            (publication_state.current_count_change() < 0 ? "lost" : "gained") <<
+            " a subscription" << endl; 
+    }
+};
+
 void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 {
     // DDS objects behave like shared pointers or value types
@@ -44,6 +60,9 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
 
     // Create a DataWriter with default QoS
     dds::pub::DataWriter< ::ShapeTypeExtended> writer(publisher, topic);
+
+    auto listener = std::make_shared<DWListener>();
+    writer.set_listener(listener);
 
     ::ShapeTypeExtended data;
     // Main loop, write data

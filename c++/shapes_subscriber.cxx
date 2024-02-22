@@ -52,10 +52,20 @@ class DRListener : public dds::sub::NoOpDataReaderListener<ShapeTypeExtended> {
                 ++samples_read;
                 cout << sample.data() << endl;
             } 
-            else { // Metadata received, do we care here?
+            else { // Metadata received, do we want to do anything here?
                 
             }
         }
+    }
+
+    virtual void on_subscription_matched(
+        dds::sub::DataReader<ShapeTypeExtended> &writer,
+        const dds::core::status::SubscriptionMatchedStatus &subscription_state) {
+
+        // -1 for a subscription lost, else gained one
+        cout << "Inside on_subscription_matched: " << 
+            (subscription_state.current_count_change() < 0 ? "lost" : "gained") <<
+            " a subscription" << endl; 
     }
 };
 
@@ -80,7 +90,7 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     while (!application::shutdown_requested && samples_read < sample_count) {
         std::cout << "::ShapeTypeExtended subscriber sleeping up to 5 sec..." << std::endl;
 
-            rti::util::sleep(Duration(4));
+            rti::util::sleep(Duration(5));
     }
 }
 
